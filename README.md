@@ -1,7 +1,7 @@
 Harkness
 ===
 
-Harkness is a simple, bad, _colorful_ unit testing framework designed to make
+Harkness is a simple, terrible, _colorful_ unit testing framework designed to make
 me happy.
 
 Using it is pretty simple. To create a unit test, first create a function
