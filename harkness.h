@@ -2,45 +2,16 @@
 
 // Copyright 2023 Owen Wheary
 
-/**
- * OVERVIEW
- *
- * harkness is a simple, bad, *colorful* unit testing framework designed to make
- * me happy.
- *
- * Using it is pretty simple. To create a unit test, first create a function
- * that looks like:
- * > void MY_FUNCTION(h_context *ctx) {...}
- * MY_FUNCTION can be whatever function name you want, but everything else must
- * be exactly the same (yes the name of the context parameter is load-bearing,
- * what of it?).
- *
- * Then, annotate the function to add it to the list of testable functions:
- * > h_test(test_name, function name);
- * > void MY_FUNCTION(h_context *ctx) {...}
- * test_name is the name of the test (used for granular test control with
- * comptime flags), and function_name is the name of the function you just made.
- *
- * Finally, place the line `run_tests()` at the top of your main function.
- *
- * To run your tests, you'll use specific compiler flags, the most basic being:
- *     gcc my_program -D TEST_ALL
- *
- * For more more information, see the rest of the documentation in this file
- * (particularly on `run_tests()`). You can also check out "example.c" for
- * examples of most functions in the library being used.
- *
- * Happy testing!
- */
-
 #include "./colors.h"
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
-// Sets nice color output when COLOR_MODE is set.
-#ifdef COLOR_MODE
+// Disables nice colors when NO_COLOR is set
+// Useful for outputing to contexts where ANSI escape sequences don't work (like
+// plaintext files).
+#ifndef NO_COLOR
 #define PASSED ANSI_COLOR_GREEN "PASSED" ANSI_COLOR_RESET
 #define FAILED ANSI_COLOR_RED "FAILED" ANSI_COLOR_RESET
 #define expr_literal(expr) ANSI_COLOR_MAGENTA "`" expr "`" ANSI_COLOR_RESET
@@ -140,7 +111,7 @@ typedef struct s_test_func {
 #define h_assert(expr)                                                         \
   do {                                                                         \
     h_test_header();                                                           \
-    fprintf(stderr, expr_literal(#expr) "... ");                               \
+    fprintf(stderr, expr_literal(#expr) " ... ");                              \
     if (expr) {                                                                \
       fprintf(stderr, PASSED ".\n");                                           \
       ctx->passed++;                                                           \
@@ -154,7 +125,7 @@ typedef struct s_test_func {
 #define h_assert_generic_compare(T, format, lhs, op, rhs)                      \
   do {                                                                         \
     h_test_header();                                                           \
-    fprintf(stderr, expr_literal(#lhs " " #op " " #rhs) "... ");               \
+    fprintf(stderr, expr_literal(#lhs " " #op " " #rhs) " ... ");              \
     T out_lhs = lhs;                                                           \
     T out_rhs = rhs;                                                           \
     if (out_lhs op out_rhs) {                                                  \
@@ -199,10 +170,10 @@ typedef struct s_test_func {
 #define h_assert_non_null(ptr)                                                 \
   do {                                                                         \
     h_test_header();                                                           \
-    fprintf(                                                                   \
-        stderr,                                                                \
-        expr_literal(#ptr) " (" expr_value("0x%" PRIxPTR) ") is non-null... ", \
-        (uintptr_t)ptr);                                                       \
+    fprintf(stderr,                                                            \
+            expr_literal(#ptr) " (" expr_value(                                \
+                "0x%" PRIxPTR) ") is non-null ... ",                           \
+            (uintptr_t)ptr);                                                   \
     if (ptr) {                                                                 \
       fprintf(stderr, PASSED ".\n");                                           \
       ctx->passed++;                                                           \
@@ -215,7 +186,7 @@ typedef struct s_test_func {
 #define h_assert_str_eq(lhs, rhs)                                              \
   do {                                                                         \
     h_test_header();                                                           \
-    fprintf(stderr, expr_literal(#lhs) " == " expr_literal(#rhs) "...");       \
+    fprintf(stderr, expr_literal(#lhs) " == " expr_literal(#rhs) " ... ");     \
     char *str_l = lhs;                                                         \
     char *str_r = rhs;                                                         \
     if (strcmp(str_l, str_r) == 0) {                                           \
