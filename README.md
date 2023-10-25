@@ -8,7 +8,7 @@ Using it is pretty simple. To create a unit test, first create a function
 that looks like:
 
 ```c
-void MY_FUNCTION(h_context \*ctx) {...}
+void MY_FUNCTION(h_context *ctx) {...}
 ```
 > MY_FUNCTION can be whatever function name you want, but everything else must
 > be exactly the same (yes the name of the context parameter is load-bearing,
@@ -18,7 +18,7 @@ Then, annotate the function to add it to the list of testable functions:
 
 ```c
 h_test(test_name, function name);
-void MY_FUNCTION(h_context \*ctx) {...}
+void MY_FUNCTION(h_context *ctx) {...}
 ```
 > test_name is the name of the test (used for granular test control with
 > comptime flags), and function_name is the name of the function you just made.
