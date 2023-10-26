@@ -183,6 +183,29 @@ typedef struct s_test_func {
     }                                                                          \
   } while (0);
 
+/**
+ * Tests a pointer to ensure it is null. Designed for use in test
+ * functions. Gives better test output than h_assert.
+ *
+ * params:
+ * ptr - the pointer to test.
+ */
+#define h_assert_null(ptr)                                                     \
+  do {                                                                         \
+    h_test_header();                                                           \
+    fprintf(                                                                   \
+        stderr,                                                                \
+        expr_literal(#ptr) " (" expr_value("0x%" PRIxPTR) ") is null ... ",    \
+        (uintptr_t)ptr);                                                       \
+    if (!ptr) {                                                                \
+      fprintf(stderr, PASSED ".\n");                                           \
+      ctx->passed++;                                                           \
+    } else {                                                                   \
+      fprintf(stderr, FAILED ".\n");                                           \
+      ctx->failed++;                                                           \
+    }                                                                          \
+  } while (0);
+
 #define h_assert_str_eq(lhs, rhs)                                              \
   do {                                                                         \
     h_test_header();                                                           \
