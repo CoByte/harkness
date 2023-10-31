@@ -31,6 +31,14 @@
 #endif /* ifndef TEST_ALL */
 #endif /* ifndef TEST */
 
+// Simple debugging macro, enable with -D DEBUG flag.
+#ifdef DEBUG
+#define debug(...)                                                             \
+  fprintf(stderr, "%s:%d: ", __FILE__, __LINE__), fprintf(stderr, __VA_ARGS__);
+#else
+#define debug(...)
+#endif
+
 // All the code up until `#define tassert` was heavily inspired by a very
 // helpful Stack Overflow post, and adapted for my own use.
 //
@@ -125,7 +133,8 @@ typedef struct s_test_func {
 #define h_assert_generic_compare(T, format, lhs, op, rhs)                      \
   do {                                                                         \
     h_test_header();                                                           \
-    fprintf(stderr, expr_literal(#lhs " " #op " " #rhs) " ... ");              \
+    fprintf(stderr,                                                            \
+            expr_literal(#lhs) " " #op " " expr_literal(#rhs) " ... ");        \
     T out_lhs = lhs;                                                           \
     T out_rhs = rhs;                                                           \
     if (out_lhs op out_rhs) {                                                  \
